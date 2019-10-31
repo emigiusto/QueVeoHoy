@@ -118,7 +118,6 @@ function ControladorRecomendaciones() {
             var ruta = "/peliculas/recomendacion";
             var query = "";
         }
-
         //se realiza el pedido de recomendacion al backend
         $.getJSON(servidor + ruta + query,
             function(data) {
@@ -130,7 +129,6 @@ function ControladorRecomendaciones() {
                 // se ejecuta la funcion seleccionarPelicula() 
                 self.seleccionarPelicula();
             });
-
     }
 
     //esta funcion se encarga de mostrar una pelicula.
@@ -160,14 +158,12 @@ function ControladorRecomendaciones() {
         $(".datos-pelicula .trama").html(data.trama);
         $(".datos-pelicula .titulo").html(data.titulo);
         $(".datos-pelicula .genero").html(data.nombre);
-
     }
 
     //esta funcion se encarga de mostrar la alerta cuando no hay mas resultados
     this.noHayResultados = function(mensaje) {
         $(".datos-pelicula").hide();
         $(".alerta-recomendacion").show();
-
     }
 
     //esta funcion se encarga de reiniciar una recomendacion
@@ -193,7 +189,5 @@ function ControladorRecomendaciones() {
             array[j] = temp;
         }
         return array;
-
     }
-
 }
