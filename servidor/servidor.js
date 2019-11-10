@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get('/pelicula',controller.traerpelicula);
+app.get('/peliculas',controller.traerpelicula);
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
 var puerto = '8081';

@@ -1,5 +1,5 @@
 //ip y puerto al que se le realizaran los pedidos
-var servidor = 'http://localhost:8080';
+var servidor = 'http://localhost:8081';
 $(document).ready(function() {
     //se hace el pedido al backend de todos los generos para cargalos en el listado de géneros
     $.getJSON(servidor + "/generos",
@@ -71,6 +71,7 @@ function ControladorPeliculas() {
             query_params.tipo_orden = orden_array[1];
 
             var query = $.param(query_params);
+            console.log(query)
 
             //se hace el pedido al backend de las peliculas
             $.getJSON(servidor + "/peliculas?" + query,

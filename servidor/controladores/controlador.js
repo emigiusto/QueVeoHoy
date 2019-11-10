@@ -8,7 +8,7 @@ function traerpelicula(req, res) {
             return res.status(404).send("Hubo un error en la consulta");
         }
         var response = {
-            'pelicula': resultado
+            'peliculas': resultado
         };
 
         res.send(JSON.stringify(response));
