@@ -37,6 +37,7 @@ function ControladorPeliculas() {
             var orden = $(".orden-select option:selected").attr("value");
             var anio = $(".anio-busqueda").val();
             
+            
             //si se recibio como parametro el numero de pagina se envia ese valor, sino, se pide la pagina 1
             var pagina_solicitada = (pagina) ? pagina : 1;
 
