@@ -6,6 +6,7 @@ var squel = require("squel");*/
 
 function traerpelicula(req, res) {
     
+
         var año = req.query.anio;
         var genero = req.query.genero;
         var titulo = req.query.titulo;
@@ -61,6 +62,8 @@ function traerpelicula(req, res) {
                                     .order(req.query.columna_orden, req.query.tipo_orden)
                                     .limit(req.query.cantidad)
                                     .build();*/
+                console.log(sqlselectSentence)
+                
 
     con.query(sqlselectSentence, function(error, resultado, fields) {
         if (error) {
@@ -74,8 +77,9 @@ function traerpelicula(req, res) {
             //Second query for count:
                 //Ubico la posición de la palabra limit para borrarla con slice posteriormente
                 var sqlLIMIT = sqlselectSentence.lastIndexOf("LIMIT");
-
+            
             sql2 = sqlselectSentence.slice(0,sqlLIMIT).replace("*", "COUNT(*) AS conteoTotal")
+            console.log(sql2)
             con.query(sql2, function(error2, resultado2, fields2) {
                 if (error2) {
                     console.log("Hubo un error en la consulta", error2.message);

@@ -73,14 +73,14 @@ function ControladorPeliculas() {
             
             var query = $.param(query_params);
             console.log(query_params)
-
+            console.log(query)   
             //se hace el pedido al backend de las peliculas
             $.getJSON(servidor + "/peliculas?" + query,
                 function(data) {
                     //se ejecuta la funcion cargarListado() pasandole como parametro las peliculas que se obtuvieron
                     self.cargarListado(data.peliculas);
-                    //se ejecuta la fucion cargarBotones() pasandole el total de peliculas que se obtienen como resultado
-                    self.cargarBotones(data.total);
+                    //se ejecuta la fucion cargarBotones() pasandole el total de peliculas que se obtienen como resultado y la pagina solicitada para pintarla
+                    self.cargarBotones(data.total,pagina_solicitada);
                 });
         },
 
@@ -114,13 +114,11 @@ function ControladorPeliculas() {
                     //se muestra la pelicula que se creo
                     pelicula.show();
                 }
-
             }
         },
-
         //esta función recibe como parámetro el total de películas que se obtienen como resultado. Según esa cantidad 
         //crea los botones de la paginación y les da la funcionalidad correspondiente
-        this.cargarBotones = function(total) {
+        this.cargarBotones = function(total,paginaNumero) {
             //se establece que se van a mostrar 52 resultados por pagina
             var cantidad_por_pagina = 52;
             var self = this;
@@ -140,6 +138,10 @@ function ControladorPeliculas() {
                 boton.appendTo($(".btn-group"));
                 //este botón no va a ser mas de la clase ejemplo-boton
                 boton.removeClass("ejemplo-boton");
+
+                if ((i+1) == paginaNumero){
+                    boton.addClass("active")
+                }
                 //se muestra el botón creado
                 boton.show();
             }
