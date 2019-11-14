@@ -1,12 +1,6 @@
 var con = require('../lib/conexionbd');
 
-/*var sql = require('sql-query');
-sqlQuery = sql.Query();
-var squel = require("squel");*/
-
 function traerpelicula(req, res) {
-    
-
         var año = req.query.anio;
         var genero = req.query.genero;
         var titulo = req.query.titulo;
@@ -37,33 +31,6 @@ function traerpelicula(req, res) {
             sqlselectSentence += (" where titulo LIKE '%" + titulo + "%'");
         }
             sqlselectSentence = sqlselectSentence + " order by " + req.query.columna_orden + " " + req.query.tipo_orden + " LIMIT " + desdeRow + " , " + cantidad
-                                    /*//{ col1: 1, col2: 2 }
-                                    console.log(whereObject)
-                                    if (whereObject.length>0) {
-                                        var wheresentence =  JSON.stringify(whereObject[0]);
-                                        if (whereObject.length>1) {
-                                            for (let index = 1; index < whereObject.length; index++) {
-                                                wheresentence += (", " + JSON.stringify(whereObject[index]));
-                                            }
-                                        }
-                                    }
-                                var s = squel.select()
-                                        .from("pelicula")
-                                        .where("anio = " + año)
-                                        .where("genero_id = " + genero)
-                                        .where("titulo = '% " + titulo + " %'")
-                                        .toString()
-
-
-
-                                var sqlSelect = sqlQuery.select()
-                                    .from('pelicula')
-                                    .where(wheresentence)
-                                    .order(req.query.columna_orden, req.query.tipo_orden)
-                                    .limit(req.query.cantidad)
-                                    .build();*/
-                console.log(sqlselectSentence)
-                
 
     con.query(sqlselectSentence, function(error, resultado, fields) {
         if (error) {
@@ -77,9 +44,8 @@ function traerpelicula(req, res) {
             //Second query for count:
                 //Ubico la posición de la palabra limit para borrarla con slice posteriormente
                 var sqlLIMIT = sqlselectSentence.lastIndexOf("LIMIT");
-            
-            sql2 = sqlselectSentence.slice(0,sqlLIMIT).replace("*", "COUNT(*) AS conteoTotal")
-            console.log(sql2)
+                //Elimino desde la palabra LIMIT para adelante y reemplazo * con COUNT(*)
+                sql2 = sqlselectSentence.slice(0,sqlLIMIT).replace("*", "COUNT(*) AS conteoTotal")
             con.query(sql2, function(error2, resultado2, fields2) {
                 if (error2) {
                     console.log("Hubo un error en la consulta", error2.message);
@@ -107,7 +73,79 @@ function traergenero(req, res) {
     });
 }
 
+function buscarpelicula(req, res) {
+    var idPelicula = req.params.idPeli
+    var sqlGeneral= 
+        "select pelicula.id as 'peliculaId', pelicula.titulo, pelicula.duracion, pelicula.director, pelicula.anio,"
+        + "pelicula.fecha_lanzamiento, pelicula.puntuacion, pelicula.poster, pelicula.trama, genero.id as 'generoId',"
+        + "genero.nombre as 'generoNombre', GROUP_CONCAT(actor.nombre SEPARATOR ',') as 'actorNombre', GROUP_CONCAT(actor.id SEPARATOR ',') as 'actorId'"
+        + " from pelicula join genero on pelicula.genero_id=genero.id"
+        + " join actor_pelicula on pelicula.id = actor_pelicula.pelicula_id"
+        + " join actor on actor_pelicula.actor_id = actor.id where pelicula.id = " + idPelicula;
+
+    con.query(sqlGeneral, function(error, resultado, fields) {
+        if (error) {
+            console.log("Hubo un error en la consulta", error.message);
+            return res.status(404).send("Hubo un error en la consulta");
+        }
+        let response = {
+            'pelicula': resultado[0],
+            'genero': resultado[0].generoNombre,
+            'actores': resultado[0].actorNombre
+        };
+
+        res.send(JSON.stringify(response))
+    })
+}
+
+
+function recomendar(req, res) {
+    var genero = req.query.genero;
+    var anio_inicio = req.query.anio_inicio;
+    var anio_fin = req.query.anio_fin;
+    var puntuacion = req.query.puntuacion;
+    
+        var sqlselectSentence = "select * from pelicula join genero on pelicula.genero_id=genero.id"
+    
+        if (genero) {
+            sqlselectSentence += (" where genero.nombre = '" + genero + "'");
+        }
+
+        if (anio_inicio && sqlselectSentence !== "select * from pelicula") {
+            sqlselectSentence += (" and pelicula.anio >" + anio_inicio);
+        }else if (anio_inicio && sqlselectSentence == "select * from pelicula"){
+            sqlselectSentence += (" where pelicula.anio >" + anio_inicio);
+        }
+
+        if (anio_fin && sqlselectSentence !== "select * from pelicula") {
+            sqlselectSentence += (" and pelicula.anio <" + anio_fin);
+        }else if (anio_fin && sqlselectSentence == "select * from pelicula"){
+            sqlselectSentence += (" where pelicula.anio <" + anio_fin);
+        }
+
+        if (puntuacion && sqlselectSentence !== "select * from pelicula") {
+            sqlselectSentence += (" and pelicula.puntuacion >" + puntuacion);
+        }else if (puntuacion && sqlselectSentence == "select * from pelicula"){
+            sqlselectSentence += (" where pelicula.puntuacion <" + puntuacion);
+        }
+        console.log(sqlselectSentence)
+
+        con.query(sqlselectSentence, function(error, resultado, fields) {
+            if (error) {
+                console.log("Hubo un error en la consulta", error.message);
+                return res.status(404).send("Hubo un error en la consulta");
+            }
+            let response = {
+                'peliculas': resultado
+            };
+    
+            res.send(JSON.stringify(response))
+        })
+}
+
 module.exports = {
     traerpelicula: traerpelicula,
-    traergenero: traergenero
+    traergenero: traergenero,
+    buscarpelicula: buscarpelicula,
+    recomendar: recomendar
 };

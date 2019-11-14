@@ -72,8 +72,7 @@ function ControladorPeliculas() {
             query_params.tipo_orden = orden_array[1];
             
             var query = $.param(query_params);
-            console.log(query_params)
-            console.log(query)   
+
             //se hace el pedido al backend de las peliculas
             $.getJSON(servidor + "/peliculas?" + query,
                 function(data) {
@@ -149,7 +148,7 @@ function ControladorPeliculas() {
                 //cada boton tiene como funcionalidad buscarPeliculas(). A esta funcion se le pasa como parametro
                 //el atributo "numero-pagina".
                 self.buscarPeliculas($(this).attr("numero-pagina"));
-                scroll(0, 0);
+                scroll(0, 750);
             });
         }
 

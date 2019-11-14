@@ -1,4 +1,4 @@
-var servidor = 'http://localhost:8080';
+var servidor = 'http://localhost:8081';
 $(document).ready(function() {
     var controladorRecomendaciones = new ControladorRecomendaciones();
     //cuando el documento esta listo se inicializan las preguntas y se le da funcionalidad a los botones
@@ -113,11 +113,12 @@ function ControladorRecomendaciones() {
 
         if (Object.keys(query_params).length !== 0) {
             var query = $.param(query_params);
-            var ruta = "/peliculas/recomendacion?"
+            var ruta = "/recomendacion?"
         } else {
-            var ruta = "/peliculas/recomendacion";
+            var ruta = "/recomendacion";
             var query = "";
         }
+        console.log(servidor + ruta + query)
         //se realiza el pedido de recomendacion al backend
         $.getJSON(servidor + ruta + query,
             function(data) {
