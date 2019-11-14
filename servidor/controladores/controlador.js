@@ -128,7 +128,6 @@ function recomendar(req, res) {
         }else if (puntuacion && sqlselectSentence == "select * from pelicula"){
             sqlselectSentence += (" where pelicula.puntuacion <" + puntuacion);
         }
-        console.log(sqlselectSentence)
 
         con.query(sqlselectSentence, function(error, resultado, fields) {
             if (error) {
